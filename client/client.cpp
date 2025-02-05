@@ -99,12 +99,12 @@ int main() {
                     cin.ignore();  // 입력 버퍼 비우기
 
                     while (true) {
-                        cout << "[Enter message]: ";
+                        cout << "[" << username << "] : ";
                         getline(cin, message);
 
                         send(client_socket, message.c_str(), message.size(), 0);
                         if (message == "exit") { Sleep(1000); break; }
-                        
+                        Sleep(500);
                     }
                 }
                 else {
