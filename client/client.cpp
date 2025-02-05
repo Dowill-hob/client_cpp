@@ -32,7 +32,6 @@ void Start_Page() {
     cout << "=                      <3. Exit    >                  =" << endl;
     cout << "=                                                     =" << endl;
     cout << "= = = = = = = = = = = = = = = = = = = = = = = = = = = =" << endl;
-
 }
 int main() {
     WSADATA wsa;
