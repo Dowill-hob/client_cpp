@@ -129,6 +129,7 @@ int main() {
         }
         else if (choice == "5") { // 종료
             cout << "System down good bye!" << endl;
+            receiveThread.join();
             break;
         }
     }
