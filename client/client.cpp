@@ -36,30 +36,8 @@ void Start_Page() {
     cout << "= = = = = = = = = = = = = = = = = = = = = = = = = = = =" << endl;
 }
 
-int main() {
-    WSADATA wsaData;
-    sockaddr_in server_addr;
-    char buffer[1024];
-    int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (result != 0) {
-        cerr << "WSAStartup 실패! 오류 코드: " << result << endl;
-        return 1; // 프로그램 종료
-    }
-    client_socket = socket(AF_INET, SOCK_STREAM, 0);
-
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(8080);
-    inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
-    if (connect(client_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) == SOCKET_ERROR) {
-        cout << "Connection failed!" << endl;
-        return 1;
-    }
-
-    cout << "Connected to server!" << endl;
-    Start_Page();
-
+void User_Control( char buffer[1024]) {
     thread receiveThread(receiveMessages); // 서버로부터 메시지를 수신하는 스레드 실행
-
     while (true) {
         memset(buffer, 0, sizeof(buffer));  // 버퍼 초기화
         string choice;
@@ -88,7 +66,7 @@ int main() {
 
             // 서버 응답 수신
             memset(buffer, 0, sizeof(buffer));  // 버퍼 초기화
-            int bytes_received = recv(client_socket, buffer, sizeof(buffer) -1 , 0);
+            int bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
             if (bytes_received > 0) {
                 buffer[bytes_received] = '\0'; // 문자열로 변환
                 string server_response(buffer);
@@ -133,6 +111,32 @@ int main() {
             break;
         }
     }
+    return;
+}
+int main() {
+    WSADATA wsaData;
+    struct sockaddr_in server;
+    char buffer[1024];
+    int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (result != 0)
+    {
+        cerr << "WSAStartup 실패! 오류 코드: " << result << endl;
+        return 1;
+    }
+    client_socket = socket(AF_INET, SOCK_STREAM, 0);
+
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8080);
+    inet_pton(AF_INET, "127.0.0.1", &server.sin_addr);
+
+    if (connect(client_socket, (struct sockaddr*)&server, sizeof(server)) == SOCKET_ERROR) {
+        cout << "Connection failed!" << endl;
+        return 1;
+    }
+    cout << "Connected to server!" << endl;
+    Start_Page();
+    User_Control(buffer);
+
     closesocket(client_socket);
     WSACleanup();
     return 0;
