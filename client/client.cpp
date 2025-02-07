@@ -66,11 +66,11 @@ void User_Control( char buffer[1024]) {
 
             // 서버 응답 수신
             memset(buffer, 0, sizeof(buffer));  // 버퍼 초기화
-            int bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
+            int bytes_received = recv(client_socket, buffer, sizeof(buffer) -1 , 0);
             if (bytes_received > 0) {
                 buffer[bytes_received] = '\0'; // 문자열로 변환
                 string server_response(buffer);
-                /*cout << "[DEBUG] : " << server_response << endl;*/
+
                 if (server_response.find("You can now start chatting") != string::npos) {
                     cout << "Logged in successfully! You can now start chatting." << endl;
                     string message;
@@ -84,18 +84,23 @@ void User_Control( char buffer[1024]) {
                         Sleep(500);
                     }
                 }
-                else {
+
+                else if (server_response.find("Try again") != string::npos) {
                     cout << "Login failed. Please try again." << endl;
+                    continue; // 다시 메뉴 선택
                 }
-
-
             }
+
+            
         }
 
         else if (choice == "3") { // 회원 탈퇴
-            string username;
+            string username, password;
             cin >> username;
             send(client_socket, username.c_str(), username.size(), 0);
+
+            cin >> password;
+            send(client_socket, password.c_str(), password.size(), 0);
             Sleep(1000);
         }
         else if (choice == "4") { // 채팅 내역 검색
